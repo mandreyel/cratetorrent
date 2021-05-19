@@ -286,11 +286,7 @@ pub(crate) struct PeerCodec;
 impl Encoder<Message> for PeerCodec {
     type Error = io::Error;
 
-    fn encode(
-        &mut self,
-        msg: Message,
-        buf: &mut BytesMut,
-    ) -> io::Result<()> {
+    fn encode(&mut self, msg: Message, buf: &mut BytesMut) -> io::Result<()> {
         use Message::*;
         match msg {
             KeepAlive => {

@@ -21,6 +21,7 @@ log = "0.4"
 lru = "0.6"
 nix = "0.19"
 percent-encoding = "2.1"
+rand = "0.8"
 reqwest = "0.10"
 serde = "1.0"
 serde_bencode = "0.2"
@@ -28,7 +29,7 @@ serde_bytes = "0.11"
 serde_derive = "1.0"
 sha-1 = "0.9"
 # TODO(#76): update tokio when reqwest also updates it
-tokio = { version = "0.2", features = ["blocking", "macros", "rt-threaded", "stream", "sync", "tcp", "time"] }
+tokio = { version = "0.2", features = ["blocking", "macros", "rt-threaded", "stream", "sync", "tcp", "time", "udp"] }
 tokio-util = { version = "0.3", features = ["codec"] }
 url = "2.2"
 

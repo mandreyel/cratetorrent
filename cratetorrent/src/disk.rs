@@ -274,10 +274,7 @@ mod tests {
         let alert = rx.recv().await.unwrap();
         assert!(matches!(
             alert,
-            engine::Command::TorrentAllocation {
-                result: Ok(()),
-                ..
-            }
+            engine::Command::TorrentAllocation { result: Ok(()), .. }
         ));
 
         // check that file was created on disk

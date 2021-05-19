@@ -14,6 +14,12 @@ pub use serde_bencode::Error as BencodeError;
 
 pub(crate) type Result<T> = crate::error::Result<T, MetainfoError>;
 
+#[derive(Clone)]
+pub struct TrackerUrl {
+    pub url: Url,
+    pub is_udp: bool,
+}
+
 #[derive(Debug)]
 pub enum MetainfoError {
     /// Holds bencode serialization or deserialization related errors.
@@ -81,7 +87,7 @@ pub struct Metainfo {
     /// The trackers that we can announce to.
     /// The tier information is not currently present in this field as
     /// cratetorrent doesn't use it. In the future it may be added.
-    pub trackers: Vec<Url>,
+    pub trackers: Vec<TrackerUrl>,
 }
 
 impl Metainfo {
@@ -171,7 +177,7 @@ impl Metainfo {
             return Err(MetainfoError::InvalidMetainfo);
         }
 
-        let mut trackers = Vec::new();
+        let mut trackers: Vec<TrackerUrl> = Vec::new();
         if !metainfo.announce_list.is_empty() {
             let tracker_count = metainfo
                 .announce_list
@@ -185,15 +191,25 @@ impl Metainfo {
                 for tracker in tier.iter() {
                     let url = Url::parse(&tracker)?;
                     // the tracker may be over UDP, which we don't support (yet)
-                    if url.scheme() == "http" || url.scheme() == "https" {
-                        trackers.push(url);
+                    match url.scheme() {
+                        "http" | "https" => {
+                            trackers.push(TrackerUrl { url, is_udp: false })
+                        }
+                        "udp" => {
+                            trackers.push(TrackerUrl { url, is_udp: true })
+                        }
+                        _ => {}
                     }
                 }
             }
         } else if let Some(tracker) = &metainfo.announce {
             let url = Url::parse(&tracker)?;
-            if url.scheme() == "http" || url.scheme() == "https" {
-                trackers.push(url);
+            match url.scheme() {
+                "http" | "https" => {
+                    trackers.push(TrackerUrl { url, is_udp: false })
+                }
+                "udp" => trackers.push(TrackerUrl { url, is_udp: true }),
+                _ => {}
             }
         }
 
